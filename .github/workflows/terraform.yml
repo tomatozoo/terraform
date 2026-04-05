@@ -33,7 +33,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -replace="aws_instance.app_server"
         continue-on-error: true
 
       # Pull Request가 아닌, main 브랜치에 Push(Merge) 되었을 때만 실제로 리소스를 생성(Apply)합니다.

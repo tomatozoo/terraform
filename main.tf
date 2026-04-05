@@ -22,7 +22,7 @@ provider "aws" {
 
 # ✨ 추가된 부분 1: GitHub Actions에서 주입해 줄 퍼블릭 키 변수 선언
 variable "EC2_PUBLIC_KEY" {
-  description = "Public key for EC2 instance injected via GitHub Actions"
+  description = "Public key value for EC2 instance injected via GitHub Actions"
   type        = string
 }
 
