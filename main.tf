@@ -8,7 +8,7 @@ terraform {
     }
   }
 
-  # 주의: 이 코드를 실행하기 전에 AWS에 'my-terraform-state-bucket'이라는 S3 버킷을 미리 만들어두어야 합니다.
+  # 주의: 이 코드를 실행하기 전에 AWS에 'terraform-bucket-hello'이라는 S3 버킷을 미리 만들어두어야 합니다.
   backend "s3" {
     bucket = "terraform-bucket-hello" # 본인이 생성한 S3 버킷 이름으로 변경
     key    = "github-actions/terraform.tfstate"
@@ -18,6 +18,18 @@ terraform {
 
 provider "aws" {
   region = var.aws_region
+}
+
+# ✨ 추가된 부분 1: GitHub Actions에서 주입해 줄 퍼블릭 키 변수 선언
+variable "EC2_PUBLIC_KEY" {
+  description = "Public key for EC2 instance injected via GitHub Actions"
+  type        = string
+}
+
+# ✨ 추가된 부분 2: AWS에 Key Pair 리소스 등록
+resource "aws_key_pair" "github_action_key" {
+  key_name   = "my-action-key" # AWS 콘솔에 보일 키 페어 이름
+  public_key = var.EC2_PUBLIC_KEY
 }
 
 # 항상 최신 Ubuntu 22.04 LTS 이미지를 찾아오는 Data Source
@@ -90,6 +102,9 @@ resource "aws_instance" "app_server" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.k3s_sg.id]
+
+  # ✨ 추가된 부분 3: 위에서 생성한 Key Pair를 EC2 인스턴스에 연결
+  key_name               = aws_key_pair.github_action_key.key_name
 
   # k3s 자동 설치 스크립트
   user_data = <<-EOF
