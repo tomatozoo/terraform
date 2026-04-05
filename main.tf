@@ -130,9 +130,6 @@ resource "aws_instance" "app_server" {
 
   lifecycle {
     create_before_destroy = true
-    replace_triggered_by = [
-      aws_instance.app_server.user_data
-    ]
   }
 
   tags = {
