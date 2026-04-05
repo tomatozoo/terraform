@@ -36,6 +36,10 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
 
+      - name: Terraform Taint (force recreate EC2)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform taint aws_instance.app_server
+
       # Pull Request가 아닌, main 브랜치에 Push(Merge) 되었을 때만 실제로 리소스를 생성(Apply)합니다.
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
