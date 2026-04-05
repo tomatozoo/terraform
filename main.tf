@@ -104,7 +104,7 @@ resource "aws_instance" "app_server" {
   vpc_security_group_ids = [aws_security_group.k3s_sg.id]
 
   # ✨ 추가된 부분 3: 위에서 생성한 Key Pair를 EC2 인스턴스에 연결
-  key_name               = aws_key_pair.github_action_key.key_name
+  key_name = aws_key_pair.github_action_key.key_name
 
   # k3s 자동 설치 스크립트
   user_data = <<-EOF
