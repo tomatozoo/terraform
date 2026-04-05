@@ -126,6 +126,13 @@ resource "aws_instance" "app_server" {
 
   associate_public_ip_address = true
 
+  lifecycle {
+    create_before_destroy = true
+    replace_triggered_by = [
+      aws_instance.app_server.user_data
+    ]
+  }
+
   tags = {
     Name = "MyActionEC2"
   }
