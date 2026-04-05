@@ -109,9 +109,19 @@ resource "aws_instance" "app_server" {
   # k3s 자동 설치 스크립트
   user_data = <<-EOF
               #!/bin/bash
+
+              # 1. 2GB 스왑(Swap) 메모리 생성 (메모리 부족 방지)
+              dd if=/dev/zero of=/swapfile bs=1M count=2048
+              chmod 600 /swapfile
+              mkswap /swapfile
+              swapon /swapfile
+              echo '/swapfile none swap sw 0 0' >> /etc/fstab
+              
               apt-get update -y
               apt-get install -y curl
-              curl -sfL https://get.k3s.io | sh -
+
+              # 3. K3s 경량화 설치 (불필요한 traefik, metrics-server 제외)
+              curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --disable metrics-server" sh -
               EOF
 
   associate_public_ip_address = true
