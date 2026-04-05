@@ -120,6 +120,8 @@ resource "aws_instance" "app_server" {
               apt-get update -y
               apt-get install -y curl
 
+              echo "hi"
+
               # 3. K3s 경량화 설치 (불필요한 traefik, metrics-server 제외)
               curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server --disable traefik --disable metrics-server" sh -
               EOF
