@@ -31,6 +31,10 @@ jobs:
       - name: Terraform Format Check
         run: terraform fmt -check
 
+      - name: Remove Stale EC2 state
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform state rm aws_instance.app_server || true
+
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color -replace="aws_instance.app_server"
